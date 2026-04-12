@@ -174,9 +174,6 @@ This toolkit is intentionally simplified.
 
 The point is not to pretend this is flight software. The point is to show transparent engineering reasoning.
 
-## GitHub Upload
-
-Step-by-step instructions are here: [GitHub Upload Guide](docs/GITHUB_UPLOAD.md)
 
 Recommended repository description:
 
@@ -198,7 +195,5 @@ python, gnss, galileo, satellite-navigation, mission-analysis, orbital-mechanics
 - Add JSON scenario inputs for different constellation designs.
 - Add a requirements trace table connecting docs, functions, and tests.
 
-## Portfolio Positioning
 
-This project supports applications for GNSS, mission analysis, satellite systems, and navigation roles by showing that Galileo/navigation training has been converted into executable, documented, tested work.
 
