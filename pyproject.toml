@@ -1,22 +1,19 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "galileo-mission-analysis-toolkit"
 version = "0.1.0"
-description = "A small GNSS mission-analysis portfolio toolkit inspired by Galileo navigation training concepts."
+description = "Planned GNSS mission-analysis toolkit inspired by Galileo navigation training concepts."
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
   { name = "Andrew Allan" }
 ]
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 keywords = ["gnss", "galileo", "mission-analysis", "satellite-navigation", "portfolio"]
 
-[project.scripts]
-galileo-mission-analysis = "galileo_mission_analysis.cli:main"
-
-[tool.setuptools.packages.find]
-where = ["src"]
-
+[project.urls]
+Repository = "https://github.com/theonlyallana/galileo-mission-analysis-toolkit"

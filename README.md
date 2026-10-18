@@ -7,7 +7,7 @@
 
 A planned Python toolkit for GNSS mission-analysis concepts inspired by ESA Navigation Training Course material.
 
-The repository is a scaffold. Package source, examples, concept notes, and tests are still to be written. Nothing here can be installed and run as a mission-analysis demo.
+The repository is a scaffold. This branch has no package source, examples, concept notes, or tests, and there is no command to run.
 
 > This is intended as a learning project, not an operational Galileo, flight dynamics, or mission operations tool.
 
@@ -17,8 +17,8 @@ The repository is a scaffold. Package source, examples, concept notes, and tests
 |------|----------------|
 | `README.md` | This description and the roadmap below |
 | `LICENSE` | MIT license |
-| `pyproject.toml` | Metadata for a future `galileo-mission-analysis-toolkit` distribution. It requires Python 3.10+ and names a console script, `galileo-mission-analysis`, aimed at `galileo_mission_analysis.cli:main`. That module is not in the tree yet, so the script is not usable. |
-| `.gitignore` | Ignores virtual environments, bytecode, pytest cache, and build artifacts |
+| `pyproject.toml` | Metadata for the `galileo-mission-analysis-toolkit` distribution: Python 3.10+, MIT, author, and the repository URL. It does not declare a console script or a package layout. |
+| `.gitignore` | Ignores virtual environments, bytecode, pytest cache (including leftover `pytest-cache-files-*` temp directories), and build artifacts |
 
 ## Roadmap
 
