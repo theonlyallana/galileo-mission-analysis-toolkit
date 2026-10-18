@@ -1,144 +1,92 @@
 # Galileo Mission Analysis Toolkit
 
-![Status](https://img.shields.io/badge/status-planned-9E9E9E)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB)
 ![License](https://img.shields.io/badge/license-MIT-111111)
-![Domain](https://img.shields.io/badge/domain-GNSS%20mission%20analysis-005B96)
 
-A planned Python toolkit for GNSS mission-analysis concepts inspired by ESA Navigation Training Course material.
+A small Python toolkit for GNSS mission-analysis concepts inspired by Galileo navigation training. It parses Walker Delta notation, estimates constellation service probability, and builds a simplified Galileo-altitude manoeuvre budget.
 
-The repository is a scaffold. Package source, examples, concept notes, and tests are still to be written. Nothing here can be installed and run as a mission-analysis demo.
+> This is a learning project, not an operational Galileo, flight dynamics, or mission operations tool.
 
-> This is intended as a learning project, not an operational Galileo, flight dynamics, or mission operations tool.
+Concept notes are in [docs/CONCEPTS.md](docs/CONCEPTS.md). How those notes relate to the navigation programme themes is in [docs/NAVIGATION_PROGRAMME_MAPPING.md](docs/NAVIGATION_PROGRAMME_MAPPING.md).
 
-## Current state
+## What works
 
-| Path | What is here |
-|------|----------------|
-| `README.md` | This description and the roadmap below |
-| `LICENSE` | MIT license |
-| `pyproject.toml` | Metadata for a future `galileo-mission-analysis-toolkit` distribution. It requires Python 3.10+ and names a console script, `galileo-mission-analysis`, aimed at `galileo_mission_analysis.cli:main`. That module is not in the tree yet, so the script is not usable. |
-| `.gitignore` | Ignores virtual environments, bytecode, pytest cache, and build artifacts |
+| Piece | Module | Behaviour |
+|-------|--------|-----------|
+| Walker Delta notation | `galileo_mission_analysis.walker` | Parses `i:t/p/f` notation such as `56:24/3/1` and reports satellites per plane, plane separation, in-plane separation, and adjacent-plane phase |
+| Availability | `galileo_mission_analysis.availability` | Independent-satellite state probabilities, probability of at least N satellites up, and a month-by-month timeline with linear reliability decay |
+| Manoeuvre budget | `galileo_mission_analysis.maneuvers` | Rules-of-thumb delta-v for semi-major axis, inclination, RAAN, relocation, and disposal, plus an ideal-rocket propellant mass |
+| Command-line demo | `galileo-mission-analysis` | Prints one fixed reference scenario. Flags: `--walker`, `--months`, `--satellites`, `--required` |
+| Example script | `examples/run_reference_scenario.py` | Runs that same demo without installing the package |
+| Tests | `tests/` | Checks Walker parsing, availability probabilities, and the manoeuvre rules of thumb |
+
+The signal-in-space and SDR acquisition material is explained in the concept guide only. There is no signal-processing code.
+
+## Install and run
+
+Python 3.10 or newer.
+
+```bash
+python -m venv .venv
+.venv/bin/pip install -e .
+.venv/bin/galileo-mission-analysis
+```
+
+On Windows, the executables are `.venv\Scripts\pip` and `.venv\Scripts\galileo-mission-analysis`.
+
+Run the same demo without installing:
+
+```bash
+python examples/run_reference_scenario.py
+```
+
+Install the test extra and run the tests:
+
+```bash
+.venv/bin/pip install -e ".[test]"
+.venv/bin/python -m pytest tests -q
+```
+
+## Layout
+
+```text
+src/galileo_mission_analysis/
+  __init__.py
+  availability.py
+  cli.py
+  maneuvers.py
+  walker.py
+tests/
+  conftest.py
+  test_availability.py
+  test_maneuvers.py
+  test_walker.py
+examples/run_reference_scenario.py
+docs/CONCEPTS.md
+docs/NAVIGATION_PROGRAMME_MAPPING.md
+```
+
+## Model boundaries
+
+The calculations are the simplified ones in the source, not a flight-dynamics model.
+
+| What the code does | What it leaves out |
+|--------------------|--------------------|
+| Independent satellite failures | Correlated failures, component reliability, operational history |
+| Linear reliability decay down to zero | A reliability model fitted to flight data |
+| Probability that at least N satellites are up | User geometry, dilution of precision, orbit propagation, ground segment |
+| Galileo-altitude rules of thumb: `\|delta-a\| / 16.13`, `\|delta-i\| * 64`, `\|delta-RAAN\| * 53.1`, relocation phase turned into a semi-major-axis offset | High-fidelity manoeuvre planning |
+| Disposal delta-v supplied by the caller | An end-of-life compliance analysis |
 
 ## Roadmap
 
-The intended scope is a small engineering toolkit that turns Galileo navigation learning into explicit models, with assumptions written down beside the calculations. The learning themes come from navigation programme material. The project is meant to explain those ideas in original notes and code, without copying course slides or workbook content.
+Not implemented:
 
-### Design
-
-```mermaid
-flowchart LR
-    A["Navigation programme material"] --> B["Concept extraction"]
-    B --> C["Walker Delta notation"]
-    B --> D["Service availability"]
-    B --> E["Manoeuvre budget"]
-    C --> F["Python package"]
-    D --> F
-    E --> F
-    F --> G["CLI demo"]
-    F --> H["Tests"]
-```
-
-Areas the finished toolkit is meant to demonstrate:
-
-| Area | Intended emphasis |
-|------|-------------------|
-| GNSS / Galileo literacy | Constellation design language, service continuity, reliability, mission-operations vocabulary |
-| Mission analysis | Walker notation, orbital plane spacing, relocation, disposal, delta-v budgeting |
-| Systems thinking | Assumptions, caveats, traceability, verification, and clean boundaries |
-| Python engineering | `src/` layout, dataclasses, a CLI, examples, tests, and package metadata |
-
-### Planned modules
-
-| Feature | Intended path | What it would do |
-|---------|---------------|------------------|
-| Walker Delta parser | `src/galileo_mission_analysis/walker.py` | Parse notation such as `56:24/3/1` and derive plane and satellite spacing |
-| Availability model | `src/galileo_mission_analysis/availability.py` | Compute constellation state probabilities and service probability over time |
-| Manoeuvre budget | `src/galileo_mission_analysis/maneuvers.py` | Estimate simplified Galileo-altitude correction, relocation, and disposal delta-v |
-| CLI scenario | `src/galileo_mission_analysis/cli.py` | Run an integrated demo |
-| Standalone example | `examples/run_reference_scenario.py` | Run the same scenario without installing the package |
-| Tests | `tests/` | Check the core calculations and edge cases |
-
-### Concepts to cover
-
-- GNSS positioning basics
-- Galileo as a navigation-system context
-- Constellation design
-- Walker Delta notation
-- Satellite reliability
-- Service availability
-- State probabilities
-- Semi-major-axis correction
-- Inclination correction
-- RAAN correction
-- Relocation phasing
-- Disposal planning
-- Delta-v budgeting
-- Ideal rocket equation propellant estimate
-- Signal-in-space processing context
-- A later SDR / I/Q / acquisition explainer
-- Systems engineering and MBSE traceability
-
-Concept notes would live in `docs/CONCEPTS.md`. A theme-to-artifact map would live in `docs/NAVIGATION_PROGRAMME_MAPPING.md`.
-
-### Programme themes to map
-
-| Navigation programme theme | Intended artifact |
-|----------------------------|-------------------|
-| Galileo constellation and mission analysis | Walker notation and a reference scenario |
-| Service availability computation | An availability timeline and state-probability functions |
-| Satellite reliability | A satellite model and a reliability-decay timeline |
-| Delta-v budget exercises | A Galileo-altitude budget |
-| Station-keeping, relocation, disposal | Manoeuvre-budget categories |
-| Galileo signal / SIS processing | Documentation, plus a later SDR acquisition explainer |
-| Requirements and system modelling | Assumptions, caveats, tests, and traceability notes |
-| Capella / ARCADIA / MBSE | A concept-to-code-to-test mapping |
-
-### Intended layout
-
-```text
-galileo-mission-analysis-toolkit/
-  README.md
-  pyproject.toml
-  LICENSE
-  docs/
-    CONCEPTS.md
-    NAVIGATION_PROGRAMME_MAPPING.md
-  examples/
-    run_reference_scenario.py
-  src/
-    galileo_mission_analysis/
-      availability.py
-      cli.py
-      maneuvers.py
-      walker.py
-  tests/
-    test_availability.py
-    test_maneuvers.py
-    test_walker.py
-```
-
-Only `README.md`, `pyproject.toml`, `LICENSE`, and `.gitignore` are in the repository today.
-
-### Modelling caveats
-
-The models are meant to stay simplified, and the documentation should say so.
-
-| Planned simplification | A real operational model would need |
-|------------------------|-------------------------------------|
-| Independent satellite failures | Correlated failures, component reliability, operational history |
-| Linear reliability decay | A reliability model fitted to real data |
-| At-least-N service probability | User geometry, DOP, orbit propagation, ground-segment constraints |
-| Galileo-altitude rules of thumb | High-fidelity astrodynamics and manoeuvre planning |
-| Disposal as an input term | A full end-of-life strategy and compliance analysis |
-
-### Later ideas
-
-- A simple dilution-of-precision geometry module
-- A synthetic SDR/GNSS acquisition explainer using code-phase and Doppler search
-- Availability plots for the reference scenario
-- JSON scenario inputs for different constellation designs
-- A requirements trace table connecting docs, functions, and tests
+- Dilution-of-precision geometry
+- A synthetic GNSS acquisition demo over code phase and Doppler
+- Plots of the availability timeline
+- JSON scenario files
+- A requirements trace from the docs to functions and tests
 
 ## License
 
