@@ -88,7 +88,7 @@ On Python 3.12.3 and pytest 9.1.1, `pytest tests -q` printed `7 passed in 0.02s`
 - `tests/test_walker.py::test_parse_walker_delta_notation`
 - `tests/test_walker.py::test_invalid_walker_delta_requires_even_plane_split`
 
-`.github/workflows/tests.yml` runs that pytest command and the example script on Python 3.12. This README does not claim a GitHub Actions result.
+`.github/workflows/tests.yml` runs that pytest command and the example script on Python 3.12. The push run for this branch, on Python 3.12.15, printed `7 passed in 0.03s` and then the same scenario text as above.
 
 ## Layout
 
